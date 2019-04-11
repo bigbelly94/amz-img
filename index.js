@@ -117,7 +117,7 @@ app.post('/products/get', (req, res) => {
             };
           };
            
-          await amazon.downloadImg(asin,imgArr);
+          // await amazon.downloadImg(asin,imgArr);
           let product = new Product();
           product.asin = req.body.asin;
           product.price = details.price;
