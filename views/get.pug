@@ -1,0 +1,13 @@
+extends layout
+
+block content
+    h1 #{title}
+    form.form-inline(action='/products/get', method='POST')
+        .form-group.mx-sm-6.mb-2
+            label.col-sm-2.col-form-label(for='asin') ASIN
+            input.form-control(type='text', placeholder='Enter ASIN', name="asin", id="asin")
+        button.btn.btn-primary.mb-2(type='submit') Get Product
+
+
+        
+        

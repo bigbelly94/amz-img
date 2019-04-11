@@ -1,0 +1,13 @@
+extends layout
+
+block content
+    h1 #{title}
+    ul.list-group
+        each product in products
+            li.media
+                img.mr-3(src=product.image,height='64', width='64')
+                .media-body
+                    a.mt-0(href="/product/"+product.asin)= product.asin
+                    div Price: #{product.price} &emsp;&emsp;&emsp;&emsp;&emsp;&emsp; #{product.status}
+                    a.btn.btn-danger.delete-product.float-right(href="#", data-id=product.asin) Delete
+
