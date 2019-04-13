@@ -165,7 +165,7 @@ const amazon = {
 
     //Lay thong tin 
     const details = await page.evaluate((asin) => {
-      const img = document.querySelector('#imgTagWrapperId > img').getAttribute('data-old-hires');
+      const img = document.querySelector('#imgTagWrapperId > img').getAttribute('src');
       const status = document.querySelector('#availability').innerText.trim();
       let price, seller;
       if (!status.includes('Available from these sellers.') && !status.includes('Currently unavailable.')) {
