@@ -172,7 +172,7 @@ async function checkPrice() {
   for (i = 0; i < products.length; i++) {
     console.log('Check ASIN: ',products[i].asin);
     const cproduct = await amazon.getProductDetails(products[i].asin);
-    if (products[i].status == cproduct.status ){
+    if (cproduct.status.includes('In Stock.') || cproduct.status.includes('Only') ){
       if(products[i].price < cproduct.price){
         sendEmail('SẢN PHẨM TĂNG GIÁ', products[i].price,cproduct.price,products[i].asin);
       } else if(products[i].price > cproduct.price){
@@ -200,8 +200,11 @@ function sendEmail(subject, price, cprice, asin)
         from : 'd.huyb94@gmail.com',
         to: 'd.huyb94@gmail.com',
         subject : subject,
-        text : `ASIN: ${asin }, Giá cũ: ${price}, Giá mới: ${cprice}
-        Link san pham: https://www.amazon.com/dp/${asin }`
+        text : `ASIN: ${asin }
+        Giá cũ: ${price}
+        Giá mới: ${cprice}
+        Link amazon: https://www.amazon.com/dp/${asin }
+        Link sp: http://www.amaget.online//product/${asin }`
     }
     transporter.sendMail(mailOptions, function(err, info){
         if(err)
