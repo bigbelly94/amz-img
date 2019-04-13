@@ -104,26 +104,12 @@ app.post('/products/get', (req, res) => {
           await amazon.Initial();
           let details = await amazon.getProductDetails(asin);
           let description = await amazon.getProductDescription(asin);
-          const imgArr = await amazon.getImgArr(asin);
-          let img;
-          let i;
-          for (i = 0; i < imgArr.length; i++) { 
-            if(imgArr[i].variant == "MAIN"){
-              if(imgArr[i].hiRes == null){
-                img = imgArr[i].large;
-                break;
-              }
-              img = imgArr[i].hiRes;
-            };
-          };
-           
-          // await amazon.downloadImg(asin,imgArr);
           let product = new Product();
           product.asin = req.body.asin;
           product.price = details.price;
           product.seller = details.seller;
           product.status = details.status;
-          product.image = img;
+          product.image = details.img;
           product.save((err) => {
             if (err) {
               console.log(err);
@@ -134,7 +120,7 @@ app.post('/products/get', (req, res) => {
                 title: 'Product Description',
                 product: product,
                 details: description,
-                img: img
+                img: product.image
               });
             }
           });

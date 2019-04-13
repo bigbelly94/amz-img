@@ -151,50 +151,6 @@ const amazon = {
      console.log(error);
    }
   },
-  getImgArr: async (asin) => {
-     //CHECK URL
-     const url = await page.url();
-     if (url != baseURL(asin)) {
-       await page.goto(baseURL(asin), {
-        waitUntil: 'networkidle2',
-        timeout: 3000000
-       });
-     };
-
-    //lay SCRIPT CHUA IMG
-    const script = await page.evaluate(() => {
-      const d1 = document.querySelectorAll('script[type="text/javascript"]');
-      let i, len = d1.length;
-      for (i = 0; i < len; i++) {
-        if (d1[i].innerText.includes(`'colorImages': { 'initial':`)) {
-          return d1[i].innerText;
-        };
-      };
-    });
-    //Convert to JSON
-    return JSON.parse((/\[{"hiRes":(.+)]/gm.exec(script))[0]);
-  },
-  
-  downloadImg: async(asin, imgArr) => {
-    //Tao thu muc
-    fs.mkdir(`${__dirname}\\img\\${asin}`, { recursive: true }, (err) => {
-      if (err) throw err;
-    });
-    //Download IMG
-    imgArr.forEach(img => {
-      const urlImg = img.hiRes != null ? img.hiRes : img.large;
-
-      download.image({
-        url: `${urlImg}`,
-        dest: `${__dirname}\\img\\${asin}\\${img.variant}.jpg`
-      })
-      .then(({
-        filename,
-        image
-      }) => console.log('File saved to', filename))
-      .catch((err) =>  console.error(err))
-    });
-  },
 
   getProductDetails: async (asin) => {
    // Toi trang san pham
@@ -209,10 +165,10 @@ const amazon = {
 
     //Lay thong tin 
     const details = await page.evaluate((asin) => {
-
+      const img = document.querySelector('#imgTagWrapperId > img').getAttribute('data-old-hires');
       const status = document.querySelector('#availability').innerText.trim();
       let price, seller;
-      if (status != 'Available from these sellers.') {
+      if (!status.includes('Available from these sellers.') && !status.includes('Currently unavailable.')) {
         price = /[^$]+/g.exec(document.querySelector('#priceblock_ourprice, #priceblock_dealprice, #priceblock_saleprice').innerText)[0];
         seller = document.querySelector('#merchant-info').innerText.trim();
       };
@@ -221,6 +177,7 @@ const amazon = {
         price,
         status,
         seller,
+        img,
         asin
       }
     },asin);
